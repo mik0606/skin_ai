@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Skin Rash Predictor</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f8fb;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 60px;
+    }
+
+    h2 {
+      color: #2b6cb0;
+      margin-bottom: 30px;
+    }
+
+    input[type="file"] {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #2b6cb0;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2c5282;
+    }
+
+    #result {
+      color: #22863a;
+      font-size: 20px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Skin Rash Predictor</h2>
+
+  <input type="file" id="imageInput" accept="image/*"><br>
+  <button onclick="predictImage()">Predict</button>
+
+  <h3 id="result"></h3>
+
+  <script>
+    async function predictImage() {
+      const fileInput = document.getElementById('imageInput');
+      if (fileInput.files.length === 0) {
+        alert("Please upload an image.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const res = await fetch('http://127.0.0.1:5000/predict', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+        console.log("Server response:", data);
+        document.getElementById('result').innerText = 'Prediction: ' + data.prediction;
+
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to connect to server.");
+      }
+    }
+  </script>
+</body>
+</html>
